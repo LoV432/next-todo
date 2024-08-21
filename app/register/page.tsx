@@ -71,6 +71,7 @@ export default function Page() {
 								<Label htmlFor="username">Username</Label>
 								<Input
 									onChange={(e) => setUsername(e.target.value)}
+									onBlur={(e) => setUsername(e.target.value)}
 									id="username"
 									placeholder="Chloe Walker"
 									required
@@ -81,6 +82,7 @@ export default function Page() {
 								<Label htmlFor="email">Email</Label>
 								<Input
 									onChange={(e) => setEmail(e.target.value)}
+									onBlur={(e) => setEmail(e.target.value)}
 									id="email"
 									placeholder="chloe@example.com"
 									required
@@ -91,6 +93,7 @@ export default function Page() {
 								<Label htmlFor="password">Password</Label>
 								<Input
 									onChange={(e) => setPassword(e.target.value)}
+									onBlur={(e) => setPassword(e.target.value)}
 									id="password"
 									required
 									type="password"
