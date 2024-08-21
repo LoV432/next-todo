@@ -1,6 +1,6 @@
-import { Checkbox } from '@/components/ui/checkbox';
 import { ObjectId } from 'mongoose';
 import RemoveSubTask from './RemoveSubTask';
+import MarkAsDone from './MarkAsDone';
 
 export default function SubTasks({
 	mainTaskId,
@@ -20,11 +20,10 @@ export default function SubTasks({
 					key={subtask._id.toString()}
 					className="flex items-center space-x-2"
 				>
-					<Checkbox
-						checked={subtask.status === 'completed'}
-						id={`subtask-${subtask._id.toString()}`}
+					<MarkAsDone
+						mainTaskId={mainTaskId}
+						subtask={{ status: subtask.status, _id: subtask._id.toString() }}
 					/>
-
 					<label
 						htmlFor={`subtask-${subtask._id.toString()}`}
 						className={`flex-grow ${subtask.status === 'completed' ? 'text-muted-foreground line-through' : ''}`}

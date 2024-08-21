@@ -3,9 +3,11 @@ import { auth } from '@/auth';
 import Tasks from '@/models/Tasks';
 import User from '@/models/User';
 import { ObjectId } from 'mongoose';
+import dbConnect from '@/lib/db';
 
 export async function POST(req: NextRequest) {
 	try {
+		await dbConnect();
 		const session = await auth();
 		if (!session) {
 			return Response.json(
@@ -41,6 +43,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
 	try {
+		await dbConnect();
 		const session = await auth();
 		if (!session) {
 			return Response.json(
@@ -81,6 +84,7 @@ export async function GET() {
 
 export async function getTasks() {
 	try {
+		await dbConnect();
 		const session = await auth();
 		if (!session) {
 			return { error: 'You must be logged in to do this.', status: 401 };
