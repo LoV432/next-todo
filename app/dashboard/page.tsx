@@ -1,9 +1,10 @@
+import AddTask from './AddTask.client';
+
 export default async function Page() {
 	return (
-		<main className="w-full justify-center pt-28">
-			<h1 className="text-center text-4xl font-bold tracking-tight sm:text-5xl">
-				Dashboard
-			</h1>
-		</main>
+		<div className="mx-auto w-full max-w-md space-y-4 p-4">
+			<h1 className="mb-4 text-2xl font-bold">Task Manager</h1>
+			<AddTask />
+		</div>
 	);
 }
