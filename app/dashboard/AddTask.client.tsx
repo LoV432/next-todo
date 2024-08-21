@@ -10,7 +10,7 @@ export default function AddTask() {
 	async function addTask() {
 		try {
 			setIsLoading(true);
-			const res = await fetch('/api/task', {
+			const res = await fetch('/api/tasks', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

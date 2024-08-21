@@ -37,3 +37,39 @@ export async function POST(req: NextRequest) {
 		return Response.json({ message: 'Task creation failed' }, { status: 500 });
 	}
 }
+
+export async function GET() {
+	try {
+		const tasks = await getTasks();
+		if ('error' in tasks) {
+			return Response.json({ error: tasks.error }, { status: tasks.status });
+		}
+		return Response.json(tasks);
+	} catch (error) {
+		return Response.json({ message: 'Task fetching failed' }, { status: 500 });
+	}
+}
+
+export async function getTasks() {
+	try {
+		const session = await auth();
+		if (!session) {
+			return { error: 'You must be logged in to do this.', status: 401 };
+		}
+		const user = await User.findOne({ username: session.user.user_name });
+		const userId = user?._id;
+		if (!userId) {
+			return { error: 'User not found.', status: 404 };
+		}
+		const tasks = await Tasks.find({ owner: userId });
+		return tasks as {
+			title: string;
+			_id: string;
+			status: 'pending' | 'completed';
+			createdAt: string;
+			updatedAt: string;
+		}[];
+	} catch (error) {
+		return { error: 'Task fetching failed', status: 500 };
+	}
+}
