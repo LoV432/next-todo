@@ -1,6 +1,5 @@
 import { getTasks } from '@/app/api/tasks/route';
-import { Button } from '@/components/ui/button';
-import { Trash2Icon } from 'lucide-react';
+import DeleteTask from './DeleteTask';
 
 export default async function Tasks() {
 	const tasks = await getTasks();
@@ -10,13 +9,13 @@ export default async function Tasks() {
 	return (
 		<ul className="space-y-4">
 			{tasks.map((task) => (
-				<li key={task._id} className="space-y-2 rounded-lg border p-4">
+				<li
+					key={task._id.toString()}
+					className="space-y-2 rounded-lg border p-4"
+				>
 					<div className="flex items-center justify-between">
 						<h3 className="text-lg font-semibold">{task.title}</h3>
-						<Button variant="ghost" size="icon">
-							<Trash2Icon className="h-4 w-4" />
-							<span className="sr-only">Delete Task</span>
-						</Button>
+						<DeleteTask id={task._id.toString()} />
 					</div>
 				</li>
 			))}

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { auth } from '@/auth';
 import Tasks from '@/models/Tasks';
 import User from '@/models/User';
+import { ObjectId } from 'mongoose';
 
 export async function POST(req: NextRequest) {
 	try {
@@ -38,6 +39,34 @@ export async function POST(req: NextRequest) {
 	}
 }
 
+export async function DELETE(req: NextRequest) {
+	try {
+		const session = await auth();
+		if (!session) {
+			return Response.json(
+				{ message: 'You must be logged in to do this.' },
+				{
+					status: 401
+				}
+			);
+		}
+		const { id } = await req.json();
+		const user = await User.findOne({ username: session.user.user_name });
+		const userId = user?._id;
+		if (!userId) {
+			return Response.json({ message: 'User not found.' }, { status: 404 });
+		}
+		const task = await Tasks.findOneAndDelete({ _id: id, owner: userId });
+		if (!task) {
+			return Response.json({ message: 'Task not found.' }, { status: 404 });
+		}
+		return Response.json({ message: 'Task deleted successfully' });
+	} catch (error) {
+		console.error(error);
+		return Response.json({ message: 'Task deletion failed' }, { status: 500 });
+	}
+}
+
 export async function GET() {
 	try {
 		const tasks = await getTasks();
@@ -61,10 +90,10 @@ export async function getTasks() {
 		if (!userId) {
 			return { error: 'User not found.', status: 404 };
 		}
-		const tasks = await Tasks.find({ owner: userId });
+		const tasks = await Tasks.find({ owner: userId }).sort({ createdAt: -1 });
 		return tasks as {
 			title: string;
-			_id: string;
+			_id: ObjectId;
 			status: 'pending' | 'completed';
 			createdAt: string;
 			updatedAt: string;

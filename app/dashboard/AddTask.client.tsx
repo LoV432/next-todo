@@ -3,8 +3,10 @@ import { PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AddTask() {
+	const router = useRouter();
 	const [title, setTitle] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	async function addTask() {
@@ -25,6 +27,7 @@ export default function AddTask() {
 			}
 			setTitle('');
 			setIsLoading(false);
+			router.refresh();
 		} catch (error) {
 			setIsLoading(false);
 		}
