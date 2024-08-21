@@ -97,6 +97,11 @@ export async function getTasks() {
 			status: 'pending' | 'completed';
 			createdAt: string;
 			updatedAt: string;
+			subTasks: {
+				title: string;
+				status: 'pending' | 'completed';
+				_id: ObjectId;
+			}[];
 		}[];
 	} catch (error) {
 		return { error: 'Task fetching failed', status: 500 };

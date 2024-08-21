@@ -1,5 +1,7 @@
 import { getTasks } from '@/app/api/tasks/route';
 import DeleteTask from './DeleteTask';
+import AddSubTask from './AddSubTask.client';
+import SubTasks from './SubTasks';
 
 export default async function Tasks() {
 	const tasks = await getTasks();
@@ -17,6 +19,8 @@ export default async function Tasks() {
 						<h3 className="text-lg font-semibold">{task.title}</h3>
 						<DeleteTask id={task._id.toString()} />
 					</div>
+					<SubTasks subTasks={task.subTasks} />
+					<AddSubTask mainTaskId={task._id.toString()} />
 				</li>
 			))}
 		</ul>
