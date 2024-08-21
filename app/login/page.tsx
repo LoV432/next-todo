@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { signInUser } from '@/lib/api/sign_in_out_user';
 import {
 	CardTitle,
 	CardDescription,
@@ -16,10 +17,6 @@ export default function Page() {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
-
-	async function signInUser(username: string, password: string) {
-		return 'Login failed';
-	}
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
