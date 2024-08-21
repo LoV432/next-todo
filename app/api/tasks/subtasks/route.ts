@@ -50,3 +50,37 @@ export async function POST(req: Request) {
 		);
 	}
 }
+
+export async function DELETE(req: Request) {
+	const { mainTaskId, subTaskId } = await req.json();
+	if (!mainTaskId || !subTaskId) {
+		return Response.json(
+			{ message: 'Missing required fields.' },
+			{ status: 400 }
+		);
+	}
+	const session = await auth();
+	if (!session) {
+		return Response.json(
+			{ message: 'You must be logged in to do this.' },
+			{
+				status: 401
+			}
+		);
+	}
+	const user = await User.findOne({ username: session.user.user_name });
+	const userId = user?._id;
+	if (!userId) {
+		return Response.json({ message: 'User not found.' }, { status: 404 });
+	}
+	const subtask = await Tasks.updateOne(
+		{ _id: mainTaskId },
+		{
+			$pull: { subTasks: { _id: subTaskId } }
+		}
+	);
+	if (!subtask) {
+		return Response.json({ message: 'Subtask not found.' }, { status: 404 });
+	}
+	return Response.json({ message: 'Subtask deleted successfully' });
+}
