@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { signInUser } from '@/lib/api/sign_in_out_user';
 import {
 	CardTitle,
 	CardDescription,
@@ -11,12 +10,16 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Page() {
+	const router = useRouter();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [email, setEmail] = useState('');
 	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -24,14 +27,31 @@ export default function Page() {
 		try {
 			setIsLoading(true);
 			setError('');
-			const response = await signInUser(username, password);
-			if (response === 'Login failed') {
-				setError('Login failed');
+			setSuccess('');
+			const response = await fetch('/api/user', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					username,
+					password,
+					email
+				})
+			});
+			setIsLoading(false);
+			if (response.status === 201) {
+				setSuccess('User created successfully');
+				setTimeout(() => {
+					router.push('/login');
+				}, 2000);
+			} else {
+				const error = await response.text();
+				setError(error);
 			}
 		} catch {
-			setError('Login failed');
-		} finally {
 			setIsLoading(false);
+			setError('User creation failed');
 		}
 	}
 
@@ -39,9 +59,9 @@ export default function Page() {
 		<main className="w-full justify-center pt-28">
 			<Card className="mx-auto max-w-sm">
 				<CardHeader className="space-y-1">
-					<CardTitle className="text-2xl font-bold">Login</CardTitle>
+					<CardTitle className="text-2xl font-bold">Register</CardTitle>
 					<CardDescription>
-						Enter your username and password to login to your account
+						Enter your details to register your account
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -58,6 +78,16 @@ export default function Page() {
 								/>
 							</div>
 							<div className="space-y-2">
+								<Label htmlFor="email">Email</Label>
+								<Input
+									onChange={(e) => setEmail(e.target.value)}
+									id="email"
+									placeholder="chloe@example.com"
+									required
+									type="email"
+								/>
+							</div>
+							<div className="space-y-2">
 								<Label htmlFor="password">Password</Label>
 								<Input
 									onChange={(e) => setPassword(e.target.value)}
@@ -68,12 +98,13 @@ export default function Page() {
 								/>
 							</div>
 							{error && <p className="text-red-500">{error}</p>}
+							{success && <p className="text-green-500">{success}</p>}
 							<Button disabled={isLoading} type="submit" className="w-full">
-								{isLoading ? 'Logging in...' : 'Login'}
+								{isLoading ? 'Registering...' : 'Register'}
 							</Button>
 							<div className="flex items-center justify-between">
 								<p className="text-sm text-muted-foreground">
-									Don't have an account? <Link href="/register">Register</Link>
+									Already have an account? <Link href="/login">Login</Link>
 								</p>
 							</div>
 						</div>
