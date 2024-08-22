@@ -29,6 +29,7 @@ import { Label } from '@/components/ui/label';
 import { useQuery } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
+import { TrashIcon } from 'lucide-react';
 
 type User = {
 	_id: string;
@@ -78,12 +79,67 @@ export default function Component() {
 								<Link href={`/dashboard/admin/${user.username}/${user._id}`}>
 									<Button variant="secondary">View Tasks</Button>
 								</Link>
+								<DeleteUserDialog user={user} refetch={refetch} />
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
 		</div>
+	);
+}
+
+function DeleteUserDialog({
+	user,
+	refetch
+}: {
+	user: User;
+	refetch: () => Promise<any>;
+}) {
+	const [isLoading, setIsLoading] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+
+	async function handleDeleteUser() {
+		try {
+			setIsLoading(true);
+			const res = await fetch(`/api/admin/all-users/delete-user`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id: user._id })
+			});
+			if (!res.ok) {
+				return;
+			}
+			await refetch();
+			setIsOpen(false);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	return (
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+			<DialogTrigger asChild>
+				<Button variant="ghost" className="ml-2">
+					<TrashIcon className="h-4 w-4" />
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="w-fit">
+				<DialogHeader>
+					<DialogTitle>Delete User</DialogTitle>
+				</DialogHeader>
+				<div>
+					<div className="pb-5">Are you sure you want to delete this user?</div>
+					<Button onClick={handleDeleteUser} disabled={isLoading}>
+						{isLoading ? 'Loading...' : 'Delete User'}
+					</Button>
+				</div>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
