@@ -7,12 +7,14 @@ export default function MarkAsDone({
 	title,
 	mainTaskId,
 	subtask,
-	refetch
+	refetch,
+	readOnly
 }: {
 	title: string;
 	mainTaskId: string;
 	subtask: { status: 'pending' | 'completed'; _id: string };
 	refetch: () => Promise<any>;
+	readOnly?: boolean;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [checked, setChecked] = useState(subtask.status === 'completed');
@@ -48,7 +50,7 @@ export default function MarkAsDone({
 				checked={checked}
 				id={`subtask-${subtask._id.toString()}`}
 				onClick={handleClick}
-				disabled={isLoading}
+				disabled={isLoading || readOnly}
 			/>
 			<label
 				htmlFor={`subtask-${subtask._id.toString()}`}

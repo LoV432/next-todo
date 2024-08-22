@@ -28,6 +28,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { useQuery } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
+import Link from 'next/link';
 
 type User = {
 	_id: string;
@@ -71,7 +72,9 @@ export default function Component() {
 							<TableCell>{user.createdAt}</TableCell>
 							<TableCell>
 								<EditUserDialog user={user} refetch={refetch} />
-								<Button variant="secondary">View Tasks</Button>
+								<Link href={`/dashboard/admin/${user.username}/${user._id}`}>
+									<Button variant="secondary">View Tasks</Button>
+								</Link>
 							</TableCell>
 						</TableRow>
 					))}

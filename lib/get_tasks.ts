@@ -20,14 +20,17 @@ export type TasksType = {
 	}[];
 }[];
 
-export async function getTasks() {
+export async function getTasks(customUserId?: string) {
 	try {
 		await dbConnect();
 		const session = await auth();
 		if (!session) {
 			return { error: 'You must be logged in to do this.', status: 401 };
 		}
-		const userId = session.user.userId;
+		let userId = session.user.userId;
+		if (session.user.role === 'admin' && customUserId) {
+			userId = customUserId;
+		}
 		const tasks = await Tasks.find({ owner: userId }).sort({ createdAt: -1 });
 		// We should remove the fileURL and then create a new endpoint for fetching the files
 		// This way we can keep the fileURL private and only expose the filename

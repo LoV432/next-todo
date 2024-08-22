@@ -8,11 +8,13 @@ import { useRouter } from 'next/navigation';
 export function Attachments({
 	taskId,
 	files,
-	refetch
+	refetch,
+	readOnly
 }: {
 	taskId: string;
 	files: { fileUrl: string; filename: string; _id: string }[];
 	refetch: () => Promise<any>;
+	readOnly?: boolean;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [deleteIsLoading, setDeleteIsLoading] = useState(false);
@@ -83,6 +85,7 @@ export function Attachments({
 								<span className="sr-only">Download File</span>
 							</a>
 							<Button
+								className={readOnly ? 'hidden' : ''}
 								variant="ghost"
 								size="icon"
 								onClick={() => handleDelete(file._id)}
@@ -107,7 +110,7 @@ export function Attachments({
 					disabled={isLoading}
 					variant="outline"
 					onClick={() => fileInputRef.current?.click()}
-					className="w-full"
+					className={`w-full ${readOnly ? 'hidden' : ''}`}
 				>
 					<PaperclipIcon className="mr-2 h-4 w-4" />
 					{isLoading ? 'Uploading...' : 'Attach Files'}

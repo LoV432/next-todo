@@ -6,7 +6,8 @@ import { useState } from 'react';
 export default function SubTasks({
 	mainTaskId,
 	subTasks,
-	refetch
+	refetch,
+	readOnly
 }: {
 	mainTaskId: string;
 	subTasks: {
@@ -15,6 +16,7 @@ export default function SubTasks({
 		_id: string;
 	}[];
 	refetch: () => Promise<any>;
+	readOnly?: boolean;
 }) {
 	return (
 		<ul>
@@ -24,6 +26,7 @@ export default function SubTasks({
 					subtask={subtask}
 					mainTaskId={mainTaskId}
 					refetch={refetch}
+					readOnly={readOnly}
 				/>
 			))}
 		</ul>
@@ -33,7 +36,8 @@ export default function SubTasks({
 function SubTask({
 	subtask,
 	mainTaskId,
-	refetch
+	refetch,
+	readOnly
 }: {
 	subtask: {
 		title: string;
@@ -42,6 +46,7 @@ function SubTask({
 	};
 	mainTaskId: string;
 	refetch: () => Promise<any>;
+	readOnly?: boolean;
 }) {
 	const [markedAsDeleted, setMarkedAsDeleted] = useState(false);
 	return (
@@ -49,17 +54,20 @@ function SubTask({
 			className={`flex items-center space-x-2 ${markedAsDeleted ? 'hidden' : ''}`}
 		>
 			<Label
+				readOnly={readOnly}
 				title={subtask.title}
 				mainTaskId={mainTaskId}
 				subtask={{ status: subtask.status, _id: subtask._id.toString() }}
 				refetch={refetch}
 			/>
-			<RemoveSubTask
-				setMarkedAsDeleted={setMarkedAsDeleted}
-				mainTaskId={mainTaskId}
-				subTaskId={subtask._id.toString()}
-				refetch={refetch}
-			/>
+			{!readOnly && (
+				<RemoveSubTask
+					setMarkedAsDeleted={setMarkedAsDeleted}
+					mainTaskId={mainTaskId}
+					subTaskId={subtask._id.toString()}
+					refetch={refetch}
+				/>
+			)}
 		</li>
 	);
 }
