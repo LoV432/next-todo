@@ -48,7 +48,9 @@ export default function Reminders() {
 			if (!newReminder.name || !newReminder.time) {
 				return;
 			}
-
+			const time =
+				new Date(newReminder.time).getTime() -
+				new Date().getTimezoneOffset() * 60000;
 			// Request notification permission if not already granted
 			if (Notification.permission !== 'granted') {
 				await Notification.requestPermission();
@@ -60,7 +62,7 @@ export default function Reminders() {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ name: newReminder.name, time: newReminder.time })
+				body: JSON.stringify({ name: newReminder.name, time })
 			});
 			if (!response.ok) {
 				return;
