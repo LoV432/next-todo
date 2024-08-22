@@ -24,7 +24,7 @@ export default async function Component() {
 						<Logout />
 						{isAdmin && (
 							<Button asChild variant="outline">
-								<Link href="/admin">Admin</Link>
+								<Link href="/dashboard/admin">Admin</Link>
 							</Button>
 						)}
 					</>
