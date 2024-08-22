@@ -2,6 +2,7 @@ import { getTasks } from '@/lib/get_tasks';
 import DeleteTask from './DeleteTask';
 import AddSubTask from './AddSubTask.client';
 import SubTasks from './SubTasks/SubTasks';
+import { Attachments } from './Attachments';
 
 export default async function Tasks() {
 	const tasks = await getTasks();
@@ -21,6 +22,7 @@ export default async function Tasks() {
 					</div>
 					<SubTasks subTasks={task.subTasks} mainTaskId={task._id.toString()} />
 					<AddSubTask mainTaskId={task._id.toString()} />
+					<Attachments taskId={task._id.toString()} files={task.files} />
 				</li>
 			))}
 		</ul>

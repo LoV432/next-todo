@@ -10,7 +10,7 @@ export default function SubTasks({
 	subTasks: {
 		title: string;
 		status: 'pending' | 'completed';
-		_id: ObjectId;
+		_id: string;
 	}[];
 }) {
 	return (
