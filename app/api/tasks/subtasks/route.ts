@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import Tasks from '@/models/Tasks';
-import User from '@/models/User';
 import dbConnect from '@/lib/db';
 
 export async function POST(req: Request) {
@@ -21,28 +20,24 @@ export async function POST(req: Request) {
 			}
 		);
 	}
-	const user = await User.findOne({ username: session.user.user_name });
-	const userId = user?._id;
-	if (!userId) {
-		return Response.json({ message: 'User not found.' }, { status: 404 });
-	}
-	const subtask = await Tasks.findOneAndUpdate(
-		{ _id: mainTaskId, owner: userId },
-		{
-			$push: {
-				subTasks: {
-					title
-				}
-			}
-		},
-		{
-			new: true
-		}
-	);
-	if (!subtask) {
-		return Response.json({ message: 'Task not found.' }, { status: 404 });
-	}
+	const userId = session.user.userId;
 	try {
+		const subtask = await Tasks.findOneAndUpdate(
+			{ _id: mainTaskId, owner: userId },
+			{
+				$push: {
+					subTasks: {
+						title
+					}
+				}
+			},
+			{
+				new: true
+			}
+		);
+		if (!subtask) {
+			return Response.json({ message: 'Task not found.' }, { status: 404 });
+		}
 		await subtask.save();
 		return Response.json({ message: 'Subtask created successfully' });
 	} catch (error) {
@@ -71,21 +66,24 @@ export async function DELETE(req: Request) {
 			}
 		);
 	}
-	const user = await User.findOne({ username: session.user.user_name });
-	const userId = user?._id;
-	if (!userId) {
-		return Response.json({ message: 'User not found.' }, { status: 404 });
-	}
-	const subtask = await Tasks.updateOne(
-		{ _id: mainTaskId, owner: userId },
-		{
-			$pull: { subTasks: { _id: subTaskId } }
+	const userId = session.user.userId;
+	try {
+		const subtask = await Tasks.updateOne(
+			{ _id: mainTaskId, owner: userId },
+			{
+				$pull: { subTasks: { _id: subTaskId } }
+			}
+		);
+		if (!subtask) {
+			return Response.json({ message: 'Subtask not found.' }, { status: 404 });
 		}
-	);
-	if (!subtask) {
-		return Response.json({ message: 'Subtask not found.' }, { status: 404 });
+		return Response.json({ message: 'Subtask deleted successfully' });
+	} catch (error) {
+		return Response.json(
+			{ message: 'Subtask deletion failed' },
+			{ status: 500 }
+		);
 	}
-	return Response.json({ message: 'Subtask deleted successfully' });
 }
 
 export async function PUT(req: Request) {
@@ -106,23 +104,23 @@ export async function PUT(req: Request) {
 			}
 		);
 	}
-	const user = await User.findOne({ username: session.user.user_name });
-	const userId = user?._id;
-	if (!userId) {
-		return Response.json({ message: 'User not found.' }, { status: 404 });
-	}
-	const subtask = await Tasks.updateOne(
-		{
-			_id: mainTaskId,
-			'subTasks._id': subTaskId,
-			owner: userId
-		},
-		{
-			$set: { 'subTasks.$.status': status }
+	const userId = session.user.userId;
+	try {
+		const subtask = await Tasks.updateOne(
+			{
+				_id: mainTaskId,
+				'subTasks._id': subTaskId,
+				owner: userId
+			},
+			{
+				$set: { 'subTasks.$.status': status }
+			}
+		);
+		if (subtask.matchedCount === 0) {
+			return Response.json({ message: 'Subtask not found.' }, { status: 404 });
 		}
-	);
-	if (subtask.matchedCount === 0) {
-		return Response.json({ message: 'Subtask not found.' }, { status: 404 });
+		return Response.json({ message: 'Subtask updated successfully' });
+	} catch (error) {
+		return Response.json({ message: 'Subtask update failed' }, { status: 500 });
 	}
-	return Response.json({ message: 'Subtask updated successfully' });
 }

@@ -33,23 +33,16 @@ export async function POST(req: Request) {
 			);
 		}
 
-		const user = await User.findOne({ username: session.user.user_name });
-		const userId = user?._id;
-		if (!userId) {
-			return new Response(JSON.stringify({ message: 'User not found.' }), {
-				status: 404
-			});
-		}
+		const userId = session.user.userId;
 
-		const task = await Tasks.findOne({ _id: taskId, owner: userId });
-		if (!task) {
-			return new Response(JSON.stringify({ message: 'Task not found.' }), {
-				status: 404
-			});
-		}
-
-		// Upload the file
 		try {
+			const task = await Tasks.findOne({ _id: taskId, owner: userId });
+			if (!task) {
+				return new Response(JSON.stringify({ message: 'Task not found.' }), {
+					status: 404
+				});
+			}
+
 			const blob = await put(filename, req.body, {
 				access: 'public'
 			});

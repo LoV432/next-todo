@@ -1,6 +1,7 @@
 import User from '@/models/User';
 import { compare } from 'bcrypt';
 import dbConnect from './db';
+import { ObjectId } from 'mongoose';
 
 export async function authUser(username: string, password: string) {
 	await dbConnect();
@@ -9,6 +10,7 @@ export async function authUser(username: string, password: string) {
 		password: string;
 		role: string;
 		email: string;
+		_id: ObjectId;
 	} | null;
 	if (!user) {
 		return null;
@@ -17,5 +19,9 @@ export async function authUser(username: string, password: string) {
 	if (!isMatch) {
 		return null;
 	}
-	return { user_name: user.username, role: user.role };
+	return {
+		user_name: user.username,
+		role: user.role,
+		userId: user._id.toString()
+	};
 }

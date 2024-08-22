@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { auth } from '@/auth';
 import Tasks from '@/models/Tasks';
 import User from '@/models/User';
-import { ObjectId } from 'mongoose';
 import dbConnect from '@/lib/db';
 import { getTasks } from '@/lib/get_tasks';
 
@@ -19,16 +18,12 @@ export async function POST(req: NextRequest) {
 			);
 		}
 		const { title } = await req.json();
-		const user = await User.findOne({ username: session.user.user_name });
-		const userId = user?._id;
-		if (!userId) {
-			return Response.json({ message: 'User not found.' }, { status: 404 });
-		}
-		const task = await Tasks.create({
-			title,
-			owner: userId
-		});
+		const userId = session.user.userId;
 		try {
+			const task = await Tasks.create({
+				title,
+				owner: userId
+			});
 			await task.save();
 			return Response.json({ message: 'Task created successfully' });
 		} catch (error) {
