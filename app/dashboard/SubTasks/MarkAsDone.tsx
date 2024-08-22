@@ -1,31 +1,33 @@
 'use client';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function MarkAsDone({
+	title,
 	mainTaskId,
 	subtask,
 	refetch
 }: {
+	title: string;
 	mainTaskId: string;
 	subtask: { status: 'pending' | 'completed'; _id: string };
 	refetch: () => Promise<any>;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [checked, setChecked] = useState(subtask.status === 'completed');
-	const router = useRouter();
 	async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
 		try {
 			setIsLoading(true);
+			const checkedValue = !checked ? 'completed' : 'pending';
+			setChecked(!checked);
 			const res = await fetch(`/api/tasks/subtasks`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					status: !checked ? 'completed' : 'pending',
+					status: checkedValue,
 					mainTaskId,
 					subTaskId: subtask._id
 				})
@@ -37,16 +39,23 @@ export default function MarkAsDone({
 		} catch (error) {
 			console.error(error);
 		} finally {
-			setChecked(!checked);
 			setIsLoading(false);
 		}
 	}
 	return (
-		<Checkbox
-			defaultChecked={subtask.status === 'completed'}
-			id={`subtask-${subtask._id.toString()}`}
-			onClick={handleClick}
-			disabled={isLoading}
-		/>
+		<>
+			<Checkbox
+				checked={checked}
+				id={`subtask-${subtask._id.toString()}`}
+				onClick={handleClick}
+				disabled={isLoading}
+			/>
+			<label
+				htmlFor={`subtask-${subtask._id.toString()}`}
+				className={`flex-grow ${checked ? 'text-muted-foreground line-through' : ''}`}
+			>
+				{title}
+			</label>
+		</>
 	);
 }

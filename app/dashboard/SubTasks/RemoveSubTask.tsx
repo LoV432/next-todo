@@ -1,23 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { XIcon } from 'lucide-react';
 
 export default function RemoveSubTask({
+	setMarkedAsDeleted,
 	mainTaskId,
 	subTaskId,
 	refetch
 }: {
+	setMarkedAsDeleted: (value: boolean) => void;
 	mainTaskId: string;
 	subTaskId: string;
 	refetch: () => Promise<any>;
 }) {
-	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 	async function deleteSubtask() {
 		try {
+			setMarkedAsDeleted(true);
 			setIsLoading(true);
 			const response = await fetch(`/api/tasks/subtasks`, {
 				method: 'DELETE',
