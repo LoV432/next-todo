@@ -75,7 +75,8 @@ export default function Page() {
 							</Button>
 							<div className="flex items-center justify-between">
 								<p className="text-sm text-muted-foreground">
-									Don't have an account? <Link href="/register">Register</Link>
+									Don&apos;t have an account?{' '}
+									<Link href="/register">Register</Link>
 								</p>
 							</div>
 						</div>

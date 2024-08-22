@@ -1,4 +1,4 @@
-import { getTasks } from '@/app/api/tasks/route';
+import { getTasks } from '@/lib/get_tasks';
 import DeleteTask from './DeleteTask';
 import AddSubTask from './AddSubTask.client';
 import SubTasks from './SubTasks/SubTasks';
