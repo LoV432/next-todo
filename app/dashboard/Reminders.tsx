@@ -48,9 +48,8 @@ export default function Reminders() {
 			if (!newReminder.name || !newReminder.time) {
 				return;
 			}
-			const time =
-				new Date(newReminder.time).getTime() -
-				new Date().getTimezoneOffset() * 60000;
+			const userDate = new Date(newReminder.time);
+			const time = userDate.toISOString();
 			// Request notification permission if not already granted
 			if (Notification.permission !== 'granted') {
 				await Notification.requestPermission();
