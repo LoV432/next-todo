@@ -1,8 +1,10 @@
 import { auth } from '@/auth';
 import Tasks from '@/models/Tasks';
 import User from '@/models/User';
+import dbConnect from '@/lib/db';
 
 export async function POST(req: Request) {
+	await dbConnect();
 	const { mainTaskId, title } = await req.json();
 	if (!mainTaskId || !title) {
 		return Response.json(
@@ -52,6 +54,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+	await dbConnect();
 	const { mainTaskId, subTaskId } = await req.json();
 	if (!mainTaskId || !subTaskId) {
 		return Response.json(
@@ -86,6 +89,7 @@ export async function DELETE(req: Request) {
 }
 
 export async function PUT(req: Request) {
+	await dbConnect();
 	const { mainTaskId, subTaskId, status } = await req.json();
 	if (!mainTaskId || !subTaskId || !status) {
 		return Response.json(
