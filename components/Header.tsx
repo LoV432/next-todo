@@ -1,19 +1,35 @@
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { auth } from '@/auth';
 import Logout from './Logout';
 
-export default async function Header() {
+export default async function Component() {
 	const session = await auth();
-	const user = session?.user.user_name;
+	const isLoggedIn = session?.user;
+	const isAdmin = session?.user?.role === 'admin';
+	const username = session?.user?.user_name;
 	return (
-		user && (
-			<header className="relative ml-auto flex flex-row pt-5">
-				<>
-					<h1 className="w-full text-center text-xl font-bold tracking-tight sm:text-3xl">
-						{`Hello, ${user}!`}
-					</h1>
-					<Logout />
-				</>
-			</header>
-		)
+		<header className="flex items-center justify-between border-b bg-background p-4">
+			<div className="hidden items-center md:flex">
+				<h1 className="text-xl font-bold">Next Tasks</h1>
+			</div>
+			<nav className="flex items-center space-x-4">
+				{!isLoggedIn ? (
+					<Button asChild>
+						<Link href="/login">Login</Link>
+					</Button>
+				) : (
+					<>
+						<span className="text-sm font-medium">Welcome, {username}</span>
+						<Logout />
+						{isAdmin && (
+							<Button asChild variant="outline">
+								<Link href="/admin">Admin</Link>
+							</Button>
+						)}
+					</>
+				)}
+			</nav>
+		</header>
 	);
 }

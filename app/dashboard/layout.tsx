@@ -17,9 +17,9 @@ export default async function DashboardLayout({
 		redirect('/login');
 	}
 	return (
-		<>
+		<div>
 			<Header />
 			{children}
-		</>
+		</div>
 	);
 }
