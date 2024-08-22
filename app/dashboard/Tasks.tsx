@@ -40,28 +40,58 @@ export default function Tasks() {
 			<AddTask refetch={refetch} />
 			<ul className="space-y-4">
 				{data.map((task) => (
-					<li
-						key={task._id.toString()}
-						className="space-y-2 rounded-lg border p-4"
-					>
-						<div className="flex items-center justify-between">
-							<h3 className="text-lg font-semibold">{task.title}</h3>
-							<DeleteTask id={task._id.toString()} refetch={refetch} />
-						</div>
-						<SubTasks
-							subTasks={task.subTasks}
-							mainTaskId={task._id.toString()}
-							refetch={refetch}
-						/>
-						<AddSubTask mainTaskId={task._id.toString()} refetch={refetch} />
-						<Attachments
-							taskId={task._id.toString()}
-							files={task.files}
-							refetch={refetch}
-						/>
-					</li>
+					<Task key={task._id.toString()} task={task} refetch={refetch} />
 				))}
 			</ul>
+		</>
+	);
+}
+
+function Task({
+	task,
+	refetch
+}: {
+	task: TasksType[0];
+	refetch: () => Promise<any>;
+}) {
+	const totalSubTasks = task.subTasks.length;
+	const totalSubTasksDone = task.subTasks.filter(
+		(subTask) => subTask.status === 'completed'
+	).length;
+	return (
+		<>
+			<li className="space-y-2 rounded-lg border p-4">
+				{totalSubTasks > 0 && (
+					<div className="flex items-center justify-between">
+						<div className="flex items-center space-x-2">
+							<span className="text-sm font-semibold">
+								{totalSubTasksDone} of {totalSubTasks} done
+							</span>
+							<span className="text-sm font-semibold">
+								{totalSubTasks - totalSubTasksDone} left
+							</span>
+						</div>
+						<span className="text-sm font-semibold">
+							{totalSubTasksDone === totalSubTasks ? 'Done' : 'In Progress'}
+						</span>
+					</div>
+				)}
+				<div className="flex items-center justify-between">
+					<h3 className="text-lg font-semibold">{task.title}</h3>
+					<DeleteTask id={task._id.toString()} refetch={refetch} />
+				</div>
+				<SubTasks
+					subTasks={task.subTasks}
+					mainTaskId={task._id.toString()}
+					refetch={refetch}
+				/>
+				<AddSubTask mainTaskId={task._id.toString()} refetch={refetch} />
+				<Attachments
+					taskId={task._id.toString()}
+					files={task.files}
+					refetch={refetch}
+				/>
+			</li>
 		</>
 	);
 }
