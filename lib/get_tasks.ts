@@ -1,6 +1,5 @@
 import dbConnect from './db';
 import Tasks from '@/models/Tasks';
-import User from '@/models/User';
 import { auth } from '@/auth';
 
 export type TasksType = {
@@ -28,11 +27,7 @@ export async function getTasks() {
 		if (!session) {
 			return { error: 'You must be logged in to do this.', status: 401 };
 		}
-		const user = await User.findOne({ username: session.user.user_name });
-		const userId = user?._id;
-		if (!userId) {
-			return { error: 'User not found.', status: 404 };
-		}
+		const userId = session.user.userId;
 		const tasks = await Tasks.find({ owner: userId }).sort({ createdAt: -1 });
 		// We should remove the fileURL and then create a new endpoint for fetching the files
 		// This way we can keep the fileURL private and only expose the filename
