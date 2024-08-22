@@ -7,6 +7,7 @@ import { Attachments } from './Attachments';
 import { useQuery } from '@tanstack/react-query';
 import AddTask from './AddTask.client';
 import { Chart } from './Chart';
+import Reminders from './Reminders';
 
 export default function Tasks() {
 	const { data, isLoading, error, refetch } = useQuery({
@@ -39,7 +40,10 @@ export default function Tasks() {
 	return (
 		<>
 			<AddTask refetch={refetch} />
-			<Chart tasks={data} />
+			<div className="flex justify-between">
+				<Chart tasks={data} />
+				<Reminders />
+			</div>
 			<ul className="space-y-4">
 				{data.map((task) => (
 					<Task key={task._id.toString()} task={task} refetch={refetch} />

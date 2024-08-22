@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/auth';
 import Tasks from '@/models/Tasks';
-import User from '@/models/User';
 import dbConnect from '@/lib/db';
 import { getTasks } from '@/lib/get_tasks';
 
@@ -50,11 +49,7 @@ export async function DELETE(req: NextRequest) {
 			);
 		}
 		const { id } = await req.json();
-		const user = await User.findOne({ username: session.user.user_name });
-		const userId = user?._id;
-		if (!userId) {
-			return Response.json({ message: 'User not found.' }, { status: 404 });
-		}
+		const userId = session.user.userId;
 		const task = await Tasks.findOneAndDelete({ _id: id, owner: userId });
 		if (!task) {
 			return Response.json({ message: 'Task not found.' }, { status: 404 });
