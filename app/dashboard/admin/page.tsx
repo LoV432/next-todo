@@ -55,6 +55,9 @@ export default function Component() {
 	return (
 		<div className="container mx-auto max-w-[900px] p-4">
 			<h1 className="mb-4 text-center text-2xl font-bold">User List</h1>
+			<div className="flex justify-end">
+				<AddUserDialog refetch={refetch} />
+			</div>
 			<Table>
 				<TableHeader>
 					<TableRow>
@@ -223,6 +226,112 @@ function EditUserDialog({
 					</div>
 					<Button type="submit" disabled={isLoading}>
 						{isLoading ? 'Loading...' : 'Save Changes'}
+					</Button>
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function AddUserDialog({ refetch }: { refetch: () => Promise<any> }) {
+	const [selectedRole, setSelectedRole] = useState('user');
+	const [isLoading, setIsLoading] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+	const formRef = useRef<HTMLFormElement>(null);
+
+	async function handleUpdateUser(
+		e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+	) {
+		e.preventDefault();
+		if (!formRef.current) {
+			return;
+		}
+		const formData = new FormData(formRef.current);
+		const { name, email, password } = Object.fromEntries(formData.entries());
+		let body = {
+			name: name,
+			email: email,
+			role: selectedRole,
+			password: password
+		};
+		try {
+			setIsLoading(true);
+			const res = await fetch('/api/admin/all-users/add-user', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(body)
+			});
+			if (!res.ok) {
+				return;
+			}
+			await refetch();
+			setIsOpen(false);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	return (
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+			<DialogTrigger asChild>
+				<Button variant="default" className="mr-2">
+					Add User
+				</Button>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Edit User</DialogTitle>
+				</DialogHeader>
+				<form onSubmit={handleUpdateUser} ref={formRef}>
+					<div className="grid gap-4 py-4">
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="username" className="text-right">
+								Username
+							</Label>
+							<Input id="name" name="name" className="col-span-3" />
+						</div>
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="email" className="text-right">
+								Email
+							</Label>
+							<Input id="email" name="email" className="col-span-3" />
+						</div>
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="role" className="text-right">
+								Role
+							</Label>
+							<Select
+								defaultValue={selectedRole}
+								onValueChange={setSelectedRole}
+							>
+								<SelectTrigger className="col-span-3">
+									<SelectValue placeholder="Select a role" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="user">User</SelectItem>
+									<SelectItem value="admin">Admin</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="grid grid-cols-4 items-center gap-4"></div>
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="password" className="text-right">
+								Password
+							</Label>
+							<Input
+								id="password"
+								name="password"
+								type="password"
+								className="col-span-3"
+							/>
+						</div>
+					</div>
+					<Button type="submit" disabled={isLoading}>
+						{isLoading ? 'Loading...' : 'Add User'}
 					</Button>
 				</form>
 			</DialogContent>
