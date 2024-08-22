@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { X, Plus, Calendar, Clock } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
 type Reminder = {
@@ -25,6 +25,7 @@ export default function Reminders() {
 	const [newReminder, setNewReminder] = useState({ name: '', time: '' });
 	const [isLoading, setIsLoading] = useState(false);
 	const [open, setOpen] = useState(false);
+	const scheduledReminders = useRef<Set<string>>(new Set());
 
 	const { data, refetch } = useQuery({
 		queryKey: ['reminders'],
@@ -36,11 +37,23 @@ export default function Reminders() {
 		refetchOnWindowFocus: false
 	});
 
+	useEffect(() => {
+		if (data) {
+			scheduleNotifications(data);
+		}
+	}, [data]);
+
 	async function addReminder() {
 		try {
 			if (!newReminder.name || !newReminder.time) {
 				return;
 			}
+
+			// Request notification permission if not already granted
+			if (Notification.permission !== 'granted') {
+				await Notification.requestPermission();
+			}
+
 			setIsLoading(true);
 			const response = await fetch('/api/reminders', {
 				method: 'POST',
@@ -58,6 +71,31 @@ export default function Reminders() {
 			console.error(error);
 		} finally {
 			setIsLoading(false);
+		}
+	}
+
+	function scheduleNotifications(reminders: Reminder[]) {
+		if (Notification.permission === 'granted') {
+			reminders.forEach((reminder) => {
+				if (scheduledReminders.current.has(reminder._id)) {
+					return; // Skip if already scheduled
+				}
+
+				const reminderTime = new Date(reminder.time).getTime();
+				const currentTime = Date.now();
+				const timeDifference = reminderTime - currentTime;
+
+				if (timeDifference > 0) {
+					setTimeout(() => {
+						new Notification('Reminder', {
+							body: `It's time for: ${reminder.name}`
+						});
+					}, timeDifference);
+
+					// Add to the set of scheduled reminders
+					scheduledReminders.current.add(reminder._id);
+				}
+			});
 		}
 	}
 
