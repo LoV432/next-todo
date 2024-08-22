@@ -18,7 +18,6 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { useMemo } from 'react';
 import { TasksType } from '@/lib/get_tasks';
 
 type ChartData = {
@@ -33,11 +32,11 @@ const chartConfig = {
 	},
 	done: {
 		label: 'Done',
-		color: 'hsl(var(--chart-1))'
+		color: 'hsl(var(--chart-2))'
 	},
 	remaining: {
 		label: 'Remaining',
-		color: 'hsl(var(--chart-2))'
+		color: 'hsl(var(--chart-1))'
 	}
 } satisfies ChartConfig;
 
@@ -46,12 +45,12 @@ export function Chart({ tasks }: { tasks: TasksType }) {
 		{
 			status: 'done',
 			tasks: 0,
-			fill: 'hsl(var(--chart-1))'
+			fill: 'hsl(var(--chart-2))'
 		},
 		{
 			status: 'remaining',
 			tasks: 0,
-			fill: 'hsl(var(--chart-2))'
+			fill: 'hsl(var(--chart-1))'
 		}
 	];
 	for (let i = 0; i < tasks.length; i++) {
@@ -135,14 +134,14 @@ export function Chart({ tasks }: { tasks: TasksType }) {
 					<CardFooter className="flex-col gap-2 text-sm">
 						<div className="flex w-full items-center justify-between">
 							<div className="flex items-center gap-2">
-								<CheckCircle className="h-4 w-4 text-[hsl(var(--chart-1))]" />
+								<CheckCircle className="h-4 w-4 text-[hsl(var(--chart-2))]" />
 								<span>Done</span>
 							</div>
 							<span className="font-medium">{doneTasks}</span>
 						</div>
 						<div className="flex w-full items-center justify-between">
 							<div className="flex items-center gap-2">
-								<Circle className="h-4 w-4 text-[hsl(var(--chart-2))]" />
+								<Circle className="h-4 w-4 text-[hsl(var(--chart-1))]" />
 								<span>Remaining</span>
 							</div>
 							<span className="font-medium">{remainingTasks}</span>

@@ -20,7 +20,9 @@ export default async function Component() {
 					</Button>
 				) : (
 					<>
-						<span className="text-sm font-medium">Welcome, {username}</span>
+						<Link href="/dashboard">
+							<span className="text-sm font-medium">Welcome, {username}</span>
+						</Link>
 						<Logout />
 						{isAdmin && (
 							<Button asChild variant="outline">
