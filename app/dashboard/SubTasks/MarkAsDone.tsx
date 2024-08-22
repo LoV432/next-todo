@@ -6,10 +6,12 @@ import { useState } from 'react';
 
 export default function MarkAsDone({
 	mainTaskId,
-	subtask
+	subtask,
+	refetch
 }: {
 	mainTaskId: string;
 	subtask: { status: 'pending' | 'completed'; _id: string };
+	refetch: () => Promise<any>;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [checked, setChecked] = useState(subtask.status === 'completed');
@@ -31,7 +33,7 @@ export default function MarkAsDone({
 			if (!res.ok) {
 				return;
 			}
-			router.refresh();
+			await refetch();
 		} catch (error) {
 			console.error(error);
 		} finally {

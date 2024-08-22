@@ -7,10 +7,12 @@ import { XIcon } from 'lucide-react';
 
 export default function RemoveSubTask({
 	mainTaskId,
-	subTaskId
+	subTaskId,
+	refetch
 }: {
 	mainTaskId: string;
 	subTaskId: string;
+	refetch: () => Promise<any>;
 }) {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function RemoveSubTask({
 			if (!response.ok) {
 				return;
 			}
-			router.refresh();
+			await refetch();
 		} catch (error) {
 			console.error(error);
 		} finally {

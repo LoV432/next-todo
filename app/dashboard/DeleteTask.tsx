@@ -4,7 +4,13 @@ import { Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function DeleteTask({ id }: { id: string }) {
+export default function DeleteTask({
+	id,
+	refetch
+}: {
+	id: string;
+	refetch: () => Promise<any>;
+}) {
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 	async function deleteTask() {
@@ -17,7 +23,7 @@ export default function DeleteTask({ id }: { id: string }) {
 			if (!res.ok) {
 				return;
 			}
-			router.refresh();
+			await await refetch();
 		} catch (error) {
 			console.error(error);
 		} finally {

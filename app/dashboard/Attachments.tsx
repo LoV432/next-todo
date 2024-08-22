@@ -7,10 +7,12 @@ import { useRouter } from 'next/navigation';
 
 export function Attachments({
 	taskId,
-	files
+	files,
+	refetch
 }: {
 	taskId: string;
 	files: { fileUrl: string; filename: string; _id: string }[];
+	refetch: () => Promise<any>;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [deleteIsLoading, setDeleteIsLoading] = useState(false);
@@ -34,7 +36,7 @@ export function Attachments({
 			if (!response.ok) {
 				return;
 			}
-			router.refresh();
+			await refetch();
 		} catch (error) {
 			console.error(error);
 		} finally {

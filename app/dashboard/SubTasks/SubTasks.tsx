@@ -4,7 +4,8 @@ import MarkAsDone from './MarkAsDone';
 
 export default function SubTasks({
 	mainTaskId,
-	subTasks
+	subTasks,
+	refetch
 }: {
 	mainTaskId: string;
 	subTasks: {
@@ -12,6 +13,7 @@ export default function SubTasks({
 		status: 'pending' | 'completed';
 		_id: string;
 	}[];
+	refetch: () => Promise<any>;
 }) {
 	return (
 		<ul>
@@ -23,6 +25,7 @@ export default function SubTasks({
 					<MarkAsDone
 						mainTaskId={mainTaskId}
 						subtask={{ status: subtask.status, _id: subtask._id.toString() }}
+						refetch={refetch}
 					/>
 					<label
 						htmlFor={`subtask-${subtask._id.toString()}`}
@@ -33,6 +36,7 @@ export default function SubTasks({
 					<RemoveSubTask
 						mainTaskId={mainTaskId}
 						subTaskId={subtask._id.toString()}
+						refetch={refetch}
 					/>
 				</li>
 			))}

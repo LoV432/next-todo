@@ -5,8 +5,13 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AddSubTask({ mainTaskId }: { mainTaskId: string }) {
-	const router = useRouter();
+export default function AddSubTask({
+	mainTaskId,
+	refetch
+}: {
+	mainTaskId: string;
+	refetch: () => Promise<any>;
+}) {
 	const [subTaskName, setSubTaskName] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	async function addSubTask() {
@@ -22,10 +27,11 @@ export default function AddSubTask({ mainTaskId }: { mainTaskId: string }) {
 					mainTaskId
 				})
 			});
-			if (response.ok) {
-				setSubTaskName('');
+			if (!response.ok) {
+				return;
 			}
-			router.refresh();
+			await refetch();
+			setSubTaskName('');
 		} catch (error) {
 			console.error(error);
 		} finally {
