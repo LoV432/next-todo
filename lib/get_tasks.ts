@@ -1,8 +1,25 @@
-import { ObjectId } from 'mongoose';
 import dbConnect from './db';
 import Tasks from '@/models/Tasks';
 import User from '@/models/User';
 import { auth } from '@/auth';
+
+export type TasksType = {
+	title: string;
+	_id: string;
+	status: 'pending' | 'completed';
+	createdAt: string;
+	updatedAt: string;
+	subTasks: {
+		title: string;
+		status: 'pending' | 'completed';
+		_id: string;
+	}[];
+	files: {
+		filename: string;
+		fileUrl: string;
+		_id: string;
+	}[];
+}[];
 
 export async function getTasks() {
 	try {
@@ -22,23 +39,7 @@ export async function getTasks() {
 		// But vercel claims the fileURL are extremely hard to guess. So in theory this is not a problem
 		// .select('-files.fileUrl');
 		const sanatizedTasks = JSON.parse(JSON.stringify(tasks)); // This makes sure no moogose objects are returned
-		return sanatizedTasks as {
-			title: string;
-			_id: string;
-			status: 'pending' | 'completed';
-			createdAt: string;
-			updatedAt: string;
-			subTasks: {
-				title: string;
-				status: 'pending' | 'completed';
-				_id: string;
-			}[];
-			files: {
-				filename: string;
-				fileUrl: string;
-				_id: string;
-			}[];
-		}[];
+		return sanatizedTasks as TasksType;
 	} catch (error) {
 		return { error: 'Task fetching failed', status: 500 };
 	}

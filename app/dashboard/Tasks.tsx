@@ -1,13 +1,16 @@
-import { getTasks } from '@/lib/get_tasks';
+import { TasksType } from '@/lib/get_tasks';
 import DeleteTask from './DeleteTask';
 import AddSubTask from './AddSubTask.client';
 import SubTasks from './SubTasks/SubTasks';
 import { Attachments } from './Attachments';
 
-export default async function Tasks() {
-	const tasks = await getTasks();
+export default async function Tasks({
+	tasks
+}: {
+	tasks: TasksType | { error: string; status: number };
+}) {
 	if ('error' in tasks) {
-		return <div className="text-red-500">{tasks.error}</div>;
+		return <div>{tasks.error}</div>;
 	}
 	return (
 		<ul className="space-y-4">
