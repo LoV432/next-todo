@@ -57,7 +57,7 @@ export default function TaskTitle({
 						onChange={handleChange}
 						placeholder="Task title"
 					/>
-					<button type="submit">Cancel</button>
+					<button onClick={() => setIsEditing(false)}>Cancel</button>
 				</form>
 			) : (
 				<h3
