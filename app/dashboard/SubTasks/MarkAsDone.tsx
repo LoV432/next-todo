@@ -4,20 +4,21 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
 
 export default function MarkAsDone({
-	title,
 	mainTaskId,
 	subtask,
 	refetch,
+	setChecked,
+	checked,
 	readOnly
 }: {
-	title: string;
 	mainTaskId: string;
 	subtask: { status: 'pending' | 'completed'; _id: string };
 	refetch: () => Promise<any>;
+	setChecked: (checked: boolean) => void;
+	checked: boolean;
 	readOnly?: boolean;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [checked, setChecked] = useState(subtask.status === 'completed');
 	async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
 		try {
 			setIsLoading(true);
@@ -52,12 +53,6 @@ export default function MarkAsDone({
 				onClick={handleClick}
 				disabled={isLoading || readOnly}
 			/>
-			<label
-				htmlFor={`subtask-${subtask._id.toString()}`}
-				className={`flex-grow ${checked ? 'text-muted-foreground line-through' : ''}`}
-			>
-				{title}
-			</label>
 		</>
 	);
 }

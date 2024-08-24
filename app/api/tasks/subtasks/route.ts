@@ -124,3 +124,42 @@ export async function PUT(req: Request) {
 		return Response.json({ message: 'Subtask update failed' }, { status: 500 });
 	}
 }
+
+export async function PATCH(req: Request) {
+	await dbConnect();
+	const { mainTaskId, subTaskId, title } = await req.json();
+	if (!mainTaskId || !subTaskId || !title) {
+		return Response.json(
+			{ message: 'Missing required fields.' },
+			{ status: 400 }
+		);
+	}
+	const session = await auth();
+	if (!session) {
+		return Response.json(
+			{ message: 'You must be logged in to do this.' },
+			{
+				status: 401
+			}
+		);
+	}
+	const userId = session.user.userId;
+	try {
+		const subtask = await Tasks.updateOne(
+			{
+				_id: mainTaskId,
+				'subTasks._id': subTaskId,
+				owner: userId
+			},
+			{
+				$set: { 'subTasks.$.title': title }
+			}
+		);
+		if (subtask.matchedCount === 0) {
+			return Response.json({ message: 'Subtask not found.' }, { status: 404 });
+		}
+		return Response.json({ message: 'Subtask updated successfully' });
+	} catch (error) {
+		return Response.json({ message: 'Subtask update failed' }, { status: 500 });
+	}
+}

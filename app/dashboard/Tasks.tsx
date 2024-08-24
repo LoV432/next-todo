@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import AddTask from './AddTask.client';
 import { Chart } from './Chart';
 import Reminders from './Reminders';
+import TaskTitle from './TaskTitle';
 
 export default function Tasks() {
 	const { data, isLoading, error, refetch } = useQuery({
@@ -83,7 +84,11 @@ function Task({
 					</div>
 				)}
 				<div className="flex items-center justify-between">
-					<h3 className="text-lg font-semibold">{task.title}</h3>
+					<TaskTitle
+						title={task.title}
+						id={task._id.toString()}
+						refetch={refetch}
+					/>
 					<DeleteTask id={task._id.toString()} refetch={refetch} />
 				</div>
 				<SubTasks

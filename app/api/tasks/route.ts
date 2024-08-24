@@ -72,3 +72,41 @@ export async function GET() {
 		return Response.json({ message: 'Task fetching failed' }, { status: 500 });
 	}
 }
+
+export async function PATCH(req: NextRequest) {
+	try {
+		await dbConnect();
+		const session = await auth();
+		if (!session) {
+			return Response.json(
+				{ message: 'You must be logged in to do this.' },
+				{
+					status: 401
+				}
+			);
+		}
+		const { id, title } = await req.json();
+		const userId = session.user.userId;
+		try {
+			const task = await Tasks.findOneAndUpdate(
+				{ _id: id, owner: userId },
+				{
+					$set: {
+						title
+					}
+				},
+				{
+					new: true
+				}
+			);
+			if (!task) {
+				return Response.json({ message: 'Task not found.' }, { status: 404 });
+			}
+			return Response.json({ message: 'Task updated successfully' });
+		} catch (error) {
+			return Response.json({ message: 'Task update failed' }, { status: 500 });
+		}
+	} catch (error) {
+		return Response.json({ message: 'Task update failed' }, { status: 500 });
+	}
+}

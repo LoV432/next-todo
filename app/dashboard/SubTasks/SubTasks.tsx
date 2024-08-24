@@ -1,7 +1,8 @@
 'use client';
 import RemoveSubTask from './RemoveSubTask';
-import Label from './MarkAsDone';
+import MarkAsDone from './MarkAsDone';
 import { useState } from 'react';
+import SubTaskTitle from './SubTaskTitle';
 
 export default function SubTasks({
 	mainTaskId,
@@ -49,16 +50,26 @@ function SubTask({
 	readOnly?: boolean;
 }) {
 	const [markedAsDeleted, setMarkedAsDeleted] = useState(false);
+	const [checked, setChecked] = useState(subtask.status === 'completed');
 	return (
 		<li
 			className={`flex items-center space-x-2 ${markedAsDeleted ? 'hidden' : ''}`}
 		>
-			<Label
+			<MarkAsDone
 				readOnly={readOnly}
-				title={subtask.title}
 				mainTaskId={mainTaskId}
 				subtask={{ status: subtask.status, _id: subtask._id.toString() }}
 				refetch={refetch}
+				setChecked={setChecked}
+				checked={checked}
+			/>
+			<SubTaskTitle
+				title={subtask.title}
+				id={subtask._id.toString()}
+				mainTaskId={mainTaskId}
+				refetch={refetch}
+				checked={checked}
+				readOnly={readOnly}
 			/>
 			{!readOnly && (
 				<RemoveSubTask
