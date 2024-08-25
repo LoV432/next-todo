@@ -29,7 +29,7 @@ import { Label } from '@/components/ui/label';
 import { useQuery } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-import { TrashIcon } from 'lucide-react';
+import { EyeIcon, PencilIcon, TrashIcon } from 'lucide-react';
 
 type User = {
 	_id: string;
@@ -64,7 +64,7 @@ export default function Component() {
 					<TableRow>
 						<TableHead>Name</TableHead>
 						<TableHead>Email</TableHead>
-						<TableHead>Created At</TableHead>
+						<TableHead className="hidden md:table-cell">Created At</TableHead>
 						<TableHead>Actions</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -73,11 +73,15 @@ export default function Component() {
 						<TableRow key={user._id}>
 							<TableCell>{user.username}</TableCell>
 							<TableCell>{user.email}</TableCell>
-							<TableCell>{user.createdAt}</TableCell>
+							<TableCell className="hidden md:table-cell">
+								{user.createdAt}
+							</TableCell>
 							<TableCell>
 								<EditUserDialog user={user} refetch={refetch} />
 								<Link href={`/dashboard/admin/${user.username}/${user._id}`}>
-									<Button variant="secondary">View Tasks</Button>
+									<Button variant="outline" className="mr-2">
+										<EyeIcon className="h-4 w-4" />
+									</Button>
 								</Link>
 								<DeleteUserDialog user={user} refetch={refetch} />
 							</TableCell>
@@ -124,7 +128,7 @@ function DeleteUserDialog({
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button variant="ghost" className="ml-2">
+				<Button variant="outline" className="mr-2">
 					<TrashIcon className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
@@ -201,7 +205,7 @@ function EditUserDialog({
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<Button variant="outline" className="mr-2">
-					Edit
+					<PencilIcon className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
 			<DialogContent>

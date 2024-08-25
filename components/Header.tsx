@@ -13,7 +13,7 @@ export default async function Component() {
 			<div className="hidden items-center md:flex">
 				<h1 className="text-xl font-bold">Next Tasks</h1>
 			</div>
-			<nav className="flex items-center space-x-4">
+			<nav className="ml-auto flex items-center space-x-4">
 				{!isLoggedIn ? (
 					<Button asChild>
 						<Link href="/login">Login</Link>
