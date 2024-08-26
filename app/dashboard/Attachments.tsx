@@ -113,7 +113,7 @@ export function Attachments({
 					className={`w-full ${readOnly ? 'hidden' : ''}`}
 				>
 					<PaperclipIcon className="mr-2 h-4 w-4" />
-					{isLoading ? 'Uploading...' : 'Attach Files'}
+					{isLoading ? 'Uploading...' : 'Attach Files - 4MB Max'}
 				</Button>
 			</div>
 		</div>
