@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import Header from '@/components/Header';
 import * as auth from '@/auth';
 
+vi.mock('@/lib/db', () => ({ __esModule: true, default: async () => {} }));
+
 test('unauthenticated user sees login button', async () => {
 	//@ts-ignore
 	vi.spyOn(auth, 'auth').mockImplementation(async () => null);
