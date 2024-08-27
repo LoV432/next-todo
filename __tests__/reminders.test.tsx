@@ -35,7 +35,7 @@ afterAll(async () => {
 	}
 });
 
-test('User endpoint works as expected', async () => {
+test('Reminders API - GET, POST', async () => {
 	try {
 		//@ts-ignore
 		vi.spyOn(auth, 'auth').mockImplementation(async () => ({
