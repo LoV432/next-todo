@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, expect, test, vi } from 'vitest';
 import { createRequest } from 'node-mocks-http';
 
-import { GET, POST } from '@/app/api/reminders/route';
+import { GET, POST, DELETE } from '@/app/api/reminders/route';
 import * as auth from '@/auth';
 import * as testDb from '@/db.vitest';
 
@@ -35,7 +35,7 @@ afterAll(async () => {
 	}
 });
 
-test('Reminders API - GET, POST', async () => {
+test('Reminders API - GET, POST, DELETE', async () => {
 	try {
 		//@ts-ignore
 		vi.spyOn(auth, 'auth').mockImplementation(async () => ({
@@ -64,7 +64,8 @@ test('Reminders API - GET, POST', async () => {
 		//@ts-ignore
 		const getResponse = await GET(getRequest as any);
 		expect(getResponse.status).toBe(200);
-		expect(await getResponse.json()).toEqual([
+		const getResponseJson = await getResponse.json();
+		expect(getResponseJson).toEqual([
 			{
 				_id: expect.any(String),
 				name: 'Test Reminder',
@@ -75,6 +76,28 @@ test('Reminders API - GET, POST', async () => {
 				__v: expect.any(Number)
 			}
 		]);
+
+		const delRequest = createRequest({
+			method: 'DELETE',
+			url: '/api/reminders',
+			json: () => ({
+				id: getResponseJson[0]._id
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		//@ts-ignore
+		const delResponse = await DELETE(delRequest as any);
+		expect(delResponse.status).toBe(200);
+		const checkDeletedRequest = createRequest({
+			method: 'GET',
+			url: '/api/reminders'
+		});
+		//@ts-ignore
+		const checkDeletedResponse = await GET(checkDeletedRequest as any);
+		expect(checkDeletedResponse.status).toBe(200);
+		expect(await checkDeletedResponse.json()).toEqual([]);
 	} catch (error) {
 		console.error('Test failed:', error);
 		throw error;
